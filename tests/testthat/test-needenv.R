@@ -34,8 +34,16 @@ test_that("printing configurations fully redacts values", {
       )
 
       expect_match(output[[1L]], "<needenv configuration>", fixed = TRUE)
-      expect_true(any(grepl("NEEDENV_TEST_PRINT_TOKEN: <set>", output, fixed = TRUE)))
-      expect_true(any(grepl("NEEDENV_TEST_PRINT_DEFAULT: <set>", output, fixed = TRUE)))
+      expect_true(any(grepl(
+        "NEEDENV_TEST_PRINT_TOKEN: <set>",
+        output,
+        fixed = TRUE
+      )))
+      expect_true(any(grepl(
+        "NEEDENV_TEST_PRINT_DEFAULT: <set>",
+        output,
+        fixed = TRUE
+      )))
       expect_false(any(grepl("super-secret-token", output, fixed = TRUE)))
       expect_false(any(grepl("secret-default", output, fixed = TRUE)))
       expect_false(visibility$visible)
@@ -67,18 +75,15 @@ test_that("quoted names remain supported", {
 })
 
 test_that("quoted names can associate defaults", {
-  with_envvars(
-    unset = "NEEDENV_TEST_QUOTED_DEFAULT",
-    code = {
-      captured <- capture_default_warning(
-        needenv("NEEDENV_TEST_QUOTED_DEFAULT" = "quoted-default")
-      )
-      expect_identical(
-        captured$value$NEEDENV_TEST_QUOTED_DEFAULT,
-        "quoted-default"
-      )
-    }
-  )
+  with_envvars(unset = "NEEDENV_TEST_QUOTED_DEFAULT", code = {
+    captured <- capture_default_warning(
+      needenv("NEEDENV_TEST_QUOTED_DEFAULT" = "quoted-default")
+    )
+    expect_identical(
+      captured$value$NEEDENV_TEST_QUOTED_DEFAULT,
+      "quoted-default"
+    )
+  })
 })
 
 test_that("environment values take precedence over defaults", {
@@ -108,18 +113,15 @@ test_that("unused default expressions are not evaluated", {
 test_that("named defaults are evaluated in the caller", {
   fallback <- "computed-default"
 
-  with_envvars(
-    unset = "NEEDENV_TEST_COMPUTED_DEFAULT",
-    code = {
-      captured <- capture_default_warning(
-        needenv(NEEDENV_TEST_COMPUTED_DEFAULT = fallback)
-      )
-      expect_identical(
-        captured$value$NEEDENV_TEST_COMPUTED_DEFAULT,
-        "computed-default"
-      )
-    }
-  )
+  with_envvars(unset = "NEEDENV_TEST_COMPUTED_DEFAULT", code = {
+    captured <- capture_default_warning(
+      needenv(NEEDENV_TEST_COMPUTED_DEFAULT = fallback)
+    )
+    expect_identical(
+      captured$value$NEEDENV_TEST_COMPUTED_DEFAULT,
+      "computed-default"
+    )
+  })
 })
 
 test_that("defaults produce one structured warning in input order", {
@@ -146,8 +148,16 @@ test_that("defaults produce one structured warning in input order", {
         conditionMessage(captured$warning),
         "NEEDENV_TEST_DEFAULT_B.*NEEDENV_TEST_DEFAULT_A"
       )
-      expect_false(grepl("b-default", conditionMessage(captured$warning), fixed = TRUE))
-      expect_false(grepl("a-default", conditionMessage(captured$warning), fixed = TRUE))
+      expect_false(grepl(
+        "b-default",
+        conditionMessage(captured$warning),
+        fixed = TRUE
+      ))
+      expect_false(grepl(
+        "a-default",
+        conditionMessage(captured$warning),
+        fixed = TRUE
+      ))
     }
   )
 })
@@ -252,20 +262,17 @@ test_that("programmatic specifications support requirements and defaults", {
 })
 
 test_that("defaults never modify the process environment", {
-  with_envvars(
-    unset = "NEEDENV_TEST_NO_MUTATION",
-    code = {
-      captured <- capture_default_warning(
-        needenv(NEEDENV_TEST_NO_MUTATION = "fallback")
-      )
+  with_envvars(unset = "NEEDENV_TEST_NO_MUTATION", code = {
+    captured <- capture_default_warning(
+      needenv(NEEDENV_TEST_NO_MUTATION = "fallback")
+    )
 
-      expect_identical(captured$value$NEEDENV_TEST_NO_MUTATION, "fallback")
-      expect_identical(
-        Sys.getenv("NEEDENV_TEST_NO_MUTATION", unset = NA_character_),
-        NA_character_
-      )
-    }
-  )
+    expect_identical(captured$value$NEEDENV_TEST_NO_MUTATION, "fallback")
+    expect_identical(
+      Sys.getenv("NEEDENV_TEST_NO_MUTATION", unset = NA_character_),
+      NA_character_
+    )
+  })
 })
 
 test_that("needenv does not alter existing process values", {
@@ -337,9 +344,15 @@ test_that("invalid specifications fail with input errors", {
   expect_error(needenv(.vars = NA_character_), class = "needenv_input")
   expect_error(needenv(.vars = ""), class = "needenv_input")
   expect_error(needenv(NEEDENV_TEST_BAD_DEFAULT = ""), class = "needenv_input")
-  expect_error(needenv(NEEDENV_TEST_BAD_DEFAULT = NA_character_), class = "needenv_input")
+  expect_error(
+    needenv(NEEDENV_TEST_BAD_DEFAULT = NA_character_),
+    class = "needenv_input"
+  )
   expect_error(needenv(NEEDENV_TEST_BAD_DEFAULT = 1), class = "needenv_input")
-  expect_error(needenv(NEEDENV_TEST_BAD_DEFAULT = c("a", "b")), class = "needenv_input")
+  expect_error(
+    needenv(NEEDENV_TEST_BAD_DEFAULT = c("a", "b")),
+    class = "needenv_input"
+  )
 
   bad_names <- "value"
   names(bad_names) <- NA_character_
@@ -355,13 +368,21 @@ test_that("condition messages never reveal environment values or defaults", {
         needenv(NEEDENV_TEST_SECRET, NEEDENV_TEST_MISSING_SECRET),
         needenv_missing = identity
       )
-      expect_false(grepl("super-secret-value", conditionMessage(missing), fixed = TRUE))
+      expect_false(grepl(
+        "super-secret-value",
+        conditionMessage(missing),
+        fixed = TRUE
+      ))
 
       defaulted <- capture_default_warning(
         needenv(NEEDENV_TEST_DEFAULT_SECRET = "secret-default")
       )
       expect_false(
-        grepl("secret-default", conditionMessage(defaulted$warning), fixed = TRUE)
+        grepl(
+          "secret-default",
+          conditionMessage(defaulted$warning),
+          fixed = TRUE
+        )
       )
     }
   )
