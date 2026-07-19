@@ -1,0 +1,8 @@
+.Rhistory
+.RData
+.Ruserdata
+.Rproj.user/
+*.Rcheck/
+needenv_*.tar.gz
+.env
+
