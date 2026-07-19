@@ -1,12 +1,17 @@
 # needenv
 
+[![CRAN status](https://www.r-pkg.org/badges/version/needenv)](https://CRAN.R-project.org/package=needenv)
+[![R-CMD-check](https://github.com/cole-brokamp/needenv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/cole-brokamp/needenv/actions/workflows/R-CMD-check.yaml)
+
 `needenv` is a small, dependency-free validation tool for R code that relies on
 environment variables. It checks every requested variable at once, reports all
 missing variables together, and makes defaults visible through one aggregated
 warning.
 
-The package does not read environment files and never changes the process
-environment.
+The package does not [read environment
+files](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRenviron.html)
+and never [changes the process
+environment](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Sys.getenv.html).
 
 ## Usage
 
@@ -17,9 +22,6 @@ config <- needenv::needenv(
   API_TOKEN,
   API_URL = "https://example.com"
 )
-
-config$API_TOKEN
-config$API_URL
 ```
 
 Printing the configuration shows which variables were resolved without
@@ -37,10 +39,50 @@ values. Redacted printing protects against accidental console output; it is not
 a security boundary because explicitly accessing, unclassing, or inspecting
 the object can still reveal its values.
 
-`API_TOKEN` is required. `API_URL` uses its process environment value when that
+In this example, `API_TOKEN` is required. `API_URL` uses its process environment value when that
 value is set and non-empty; otherwise it uses the supplied default. Defaults are
 evaluated only when needed, returned in `config`, and never written to the
 process environment.
+
+## Resolved configuration versus the process environment
+
+`needenv()` treats the process environment as input and returns a resolved
+configuration for R code to use. A default is an ordinary value in that
+returned list; it does not become an environment variable and is not visible to
+other code that calls `Sys.getenv()`.
+
+This keeps validation and default selection together at the boundary of a
+script or function instead of scattering `Sys.getenv()` calls and checks
+throughout its implementation:
+
+```r
+run_analysis <- function() {
+  config <- needenv::needenv(
+    API_TOKEN,
+    API_URL = "https://example.com"
+  )
+
+  analyze_with_api(
+    token = config$API_TOKEN,
+    url = config$API_URL
+  )
+}
+```
+
+Users remain responsible for managing their own process environment. If the
+variables must actually exist there (for example, because downstream code reads
+them independently with `Sys.getenv()`) do not supply defaults:
+
+```r
+config <- needenv::needenv(API_TOKEN, API_URL)
+```
+
+That call succeeds only when both variables are set and non-empty in the
+current process environment. Alternatively, arrange for them to be set before
+the check runs, using an [R startup environment
+file](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Startup.html) or an
+[explicit upstream setup
+step](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Sys.getenv.html).
 
 If a default is used, `needenv()` emits one warning containing only the affected
 variable names:

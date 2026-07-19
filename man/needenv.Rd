@@ -67,6 +67,11 @@ config <- needenv(
   NEEDENV_EXAMPLE_TOKEN,
   NEEDENV_EXAMPLE_URL = "https://default.example.com"
 )
+
+# printing redacts values
+config
+
+# but values are still accessible
 config$NEEDENV_EXAMPLE_TOKEN
 config$NEEDENV_EXAMPLE_URL
 

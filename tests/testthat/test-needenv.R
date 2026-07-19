@@ -318,6 +318,18 @@ test_that("unsupported expressions point callers to .vars", {
   )
 })
 
+test_that("NA argument names in dots are rejected", {
+  dots <- list(quote(NEEDENV_TEST_NA_TAG))
+  names(dots) <- NA_character_
+
+  expect_error(
+    .needenv_parse_dots(dots, environment()),
+    "Argument names in `...` cannot be `NA`.",
+    fixed = TRUE,
+    class = "needenv_input"
+  )
+})
+
 test_that("invalid specifications fail with input errors", {
   expect_error(needenv(), class = "needenv_input")
   expect_error(needenv(.vars = character()), class = "needenv_input")
