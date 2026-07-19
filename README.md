@@ -4,9 +4,10 @@
 [![R-CMD-check](https://github.com/cole-brokamp/needenv/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/cole-brokamp/needenv/actions/workflows/R-CMD-check.yaml)
 
 `needenv` is a small, dependency-free validation tool for R code that relies on
-environment variables. It checks every requested variable at once, reports all
-missing variables together, and makes defaults visible through one aggregated
-warning.
+[environment
+variables](https://stat.ethz.ch/R-manual/R-devel/library/base/html/EnvVar.html).
+It checks every requested variable at once, reports all missing variables
+together, and makes defaults visible through one aggregated warning.
 
 The package does not [read environment
 files](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRenviron.html)
