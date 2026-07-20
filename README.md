@@ -14,6 +14,16 @@ files](https://stat.ethz.ch/R-manual/R-devel/library/base/html/readRenviron.html
 and never [changes the process
 environment](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Sys.getenv.html).
 
+## Installation
+
+Until `needenv` is available on CRAN, install it from GitHub with
+[`pak`](https://pak.r-lib.org/):
+
+```r
+install.packages("pak")
+pak::pkg_install("cole-brokamp/needenv")
+```
+
 ## Usage
 
 Bare names are the preferred interface:
