@@ -9,6 +9,8 @@ Description: Validates that required environment variables are set and
     call-site defaults, and all unresolved variables are reported together.
     Successful values are returned as a named list without reading environment
     files or modifying the process environment.
+URL: https://github.com/cole-brokamp/needenv
+BugReports: https://github.com/cole-brokamp/needenv/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
